@@ -163,16 +163,19 @@ void WaypointFollowingVisualization::timerCallback(
 			boost::bind(&WaypointFollowingVisualization::setWaypointRoutine,
 					this, _1));
 	rsm_msgs::GetWaypointRoutines srv;
-	if (_get_waypoint_routines_client.call(srv)) {
-		_waypoint_routines = srv.response.waypointRoutines;
-		for (auto it : _waypoint_routines) {
-			_menu_handler.insert(sub_menu_handle, it,
-					boost::bind(
-							&WaypointFollowingVisualization::setWaypointRoutine,
-							this, _1));
+	for(int i = 0; i < 10; i ++){
+		usleep(1000000);
+		if (_get_waypoint_routines_client.call(srv)) {
+			_waypoint_routines = srv.response.waypointRoutines;
+			for (auto it : _waypoint_routines) {
+				_menu_handler.insert(sub_menu_handle, it,
+						boost::bind(
+								&WaypointFollowingVisualization::setWaypointRoutine,
+								this, _1));
+			}
+		} else {
+			ROS_ERROR("Failed to call Get Waypoint Routines service");
 		}
-	} else {
-		ROS_ERROR("Failed to call Get Waypoint Routines service");
 	}
 }
 
